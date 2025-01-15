@@ -29,6 +29,7 @@ public class TeleopSwerve extends Command {
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
+        Constants.AdvancedTractionControlConstants.TractionControlLevel.OFF.apply();
 
     }
 

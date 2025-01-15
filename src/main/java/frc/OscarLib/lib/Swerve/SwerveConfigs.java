@@ -39,12 +39,12 @@ public final class SwerveConfigs {
                 angle.MotorOutput.NeutralMode = NeutralModeValue.Coast;
                 angle.Feedback.SensorToMechanismRatio = SwerveConstants.angleGearRatio; // Updated gear ratio
                 angle.ClosedLoopGeneral.ContinuousWrap = true;
-                angle.CurrentLimits.SupplyCurrentLimitEnable = true;
-                angle.CurrentLimits.SupplyCurrentLimit = 45;
-                angle.CurrentLimits.SupplyCurrentLowerLimit = 80;
+                angle.CurrentLimits.SupplyCurrentLimitEnable = false;
+                angle.CurrentLimits.SupplyCurrentLimit = 40;
+                angle.CurrentLimits.SupplyCurrentLowerLimit = 30;
                 angle.CurrentLimits.SupplyCurrentLowerTime = 0.1;
                 angle.CurrentLimits.StatorCurrentLimitEnable = true;
-                angle.CurrentLimits.StatorCurrentLimit = 80;
+                angle.CurrentLimits.StatorCurrentLimit = 60;
                 angle.Slot0.kP = 180.0; // Updated PID constant
                 angle.Slot0.kI = 0.0; // Updated PID constant
                 angle.Slot0.kD = 0.0; // Updated PID constant
@@ -60,11 +60,11 @@ public final class SwerveConfigs {
                 drive.MotorOutput.NeutralMode = NeutralModeValue.Brake;
                 drive.Feedback.SensorToMechanismRatio = SwerveConstants.driveGearRatio; // Updated gear ratio
                 drive.CurrentLimits.SupplyCurrentLimitEnable = true;
-                drive.CurrentLimits.SupplyCurrentLimit = 85;
+                drive.CurrentLimits.SupplyCurrentLimit = 70;
                 drive.CurrentLimits.SupplyCurrentLowerLimit = 60;
                 drive.CurrentLimits.SupplyCurrentLowerTime = 0.2;
                 drive.CurrentLimits.StatorCurrentLimitEnable = true;
-                drive.CurrentLimits.StatorCurrentLimit = 80;
+                drive.CurrentLimits.StatorCurrentLimit = 120;
 
                 drive.Voltage.PeakForwardVoltage = 16.0;
                 drive.Voltage.PeakReverseVoltage = -16.0;

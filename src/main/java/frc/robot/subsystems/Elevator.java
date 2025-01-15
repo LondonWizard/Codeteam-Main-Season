@@ -107,7 +107,7 @@ public class Elevator extends SubsystemBase {
         this.heightTargetMeters = heightTargetMeters;
     }
 
-    public double getHeightTargetMeters() {
+    public double getHeightofmaxTargetMeters() {
         return heightTargetMeters;
     }
 

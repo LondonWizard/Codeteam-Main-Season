@@ -30,7 +30,7 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    private final PS4Controller driver = new PS4Controller(0);
 
     private final SendableChooser<Command> autoChooser;
     public static final boolean serializedAutoActive = false;
@@ -41,12 +41,9 @@ public class RobotContainer {
     private final int rotationAxis = PS4Controller.Axis.kRightX.value;
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kOptions.value);
+    private final JoystickButton serialize = new JoystickButton(driver, PS4Controller.Button.kOptions.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL1.value);
-    private final JoystickButton shootButton = new JoystickButton(driver, PS4Controller.Button.kCross.value);
-    private final JoystickButton intakeButton = new JoystickButton(driver, PS4Controller.Button.kCircle.value);
-    private final JoystickButton goToSpeakerButton = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
-    private final JoystickButton outtakeButton = new JoystickButton(driver, PS4Controller.Button.kL2.value);
+
 
     /* Subsystems */
     private final Swerve s_Swerve = Swerve.getInstance();
@@ -59,9 +56,9 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
                 new TeleopSwerve(
                         s_Swerve,
-                        () -> -driver.getRawAxis(translationAxis),
-                        () -> -driver.getRawAxis(strafeAxis),
-                        () -> driver.getRawAxis(rotationAxis),
+                        () -> JoystickCurvature.applyCurve(-driver.getRawAxis(translationAxis), 0.7),
+                        () -> JoystickCurvature.applyCurve(-driver.getRawAxis(strafeAxis), 0.7),
+                        () -> JoystickCurvature.applyCurve(driver.getRawAxis(rotationAxis), 0.7),
                         () -> robotCentric.getAsBoolean()));
         AutoBuilder.configure(s_Swerve::getPose,
                 s_Swerve::resetPose,
@@ -87,10 +84,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> serialize()));
-        goToSpeakerButton.whileTrue(new InstantCommand(() -> AutoBuilder
-                .pathfindToPoseFlipped(new Pose2d(new Translation2d(1.49, 5.55), Rotation2d.fromDegrees(0)),
-                        Constants.AutoConstants.GLOBAL_CONSTRAINTS)));
+        serialize.onTrue(new InstantCommand(() -> serialize()));
 
     }
 

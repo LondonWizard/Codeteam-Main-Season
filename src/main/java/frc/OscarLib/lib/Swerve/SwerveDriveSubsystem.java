@@ -56,7 +56,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
 
     private final odometryThread _odometryThread;
 
-    protected boolean isTractionControlActive = true;
+    protected boolean isTractionControlActive = false;
     public boolean isTractionControlActive() {
         return isTractionControlActive;
     }
@@ -321,7 +321,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
                         translation.getX(),
                         translation.getY(),
                         rotation,
-                        getYaw().plus(yawOffset)
+                        getPose().getRotation().plus(yawOffset)
                                 .rotateBy(Rotation2d.fromDegrees((Util.getAlliance() == Alliance.Red ? 180 : 0))))
                         : new ChassisSpeeds(
                                 translation.getX(),

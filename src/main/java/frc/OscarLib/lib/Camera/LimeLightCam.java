@@ -68,6 +68,10 @@ public class LimeLightCam extends BaseCam {
         LimelightHelpers.SetRobotOrientation(name, curYaw.getDegrees(), 0, 0, 0, 0, 0);
     }
 
+    public void SetRobotOrientation(Rotation2d curYaw, double curYawRate) {
+        LimelightHelpers.SetRobotOrientation(name, curYaw.getDegrees(), curYawRate, 0, 0, 0, 0);
+    }
+
     public Optional<AprilTagResult> getEstimate() {
         LimelightHelpers.PoseEstimate latestEstimate;
         if (!useMegaTag2 || DriverStation.isDisabled()) {

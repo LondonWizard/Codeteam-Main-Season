@@ -21,11 +21,11 @@ public final class ElevatorConfigs {
 
         motor1.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         motor1.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        motor1.Feedback.SensorToMechanismRatio = 0; // Use conversions in code
+        //motor1.Feedback.SensorToMechanismRatio = 0; // Use conversions in code
         motor1.ClosedLoopGeneral.ContinuousWrap = false;
         motor1.CurrentLimits.SupplyCurrentLimitEnable = true;
-        motor1.CurrentLimits.SupplyCurrentLimit = 45;
-        motor1.CurrentLimits.SupplyCurrentLowerLimit = 80;
+        motor1.CurrentLimits.SupplyCurrentLimit = 30;
+        motor1.CurrentLimits.SupplyCurrentLowerLimit = 20;
         motor1.CurrentLimits.SupplyCurrentLowerTime = 0.1;
         motor1.CurrentLimits.StatorCurrentLimitEnable = true;
         motor1.CurrentLimits.StatorCurrentLimit = 80;
