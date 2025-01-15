@@ -12,7 +12,7 @@ import frc.OscarLib.lib.Logging.PLog;
 
 public class CANCoderFactory {
     private final double TIMEOUT = 0.05;
-    private CANcoder _encoder;
+    public CANcoder _encoder;
     private CANcoderConfiguration _config;
     private String _name;
 
@@ -35,13 +35,15 @@ public class CANCoderFactory {
     }
 
     public boolean configure(boolean force) {
-        if (!force && _configured) return true;
-        if (!force && Timer.getFPGATimestamp() - _lastConfiguration < 3) return false;
+        if (!force && _configured)
+            return true;
+        if (!force && Timer.getFPGATimestamp() - _lastConfiguration < 3)
+            return false;
 
         _lastConfiguration = Timer.getFPGATimestamp();
         StatusCode configCode = _encoder.getConfigurator().apply(this._config, TIMEOUT);
 
-        if(configCode.isError()) {
+        if (configCode.isError()) {
             PLog.unusual(_name, "Failed to configure");
         } else {
             PLog.info(_name, "Configured");
@@ -55,19 +57,17 @@ public class CANCoderFactory {
         return _configured;
     }
 
-
     public Rotation2d getPosition() {
         if (configure()) {
             StatusSignal<Angle> positionCode = _encoder.getAbsolutePosition();
-            if(!positionCode.getStatus().isOK()) {
+            if (!positionCode.getStatus().isOK()) {
                 _configured = false;
                 return new Rotation2d();
             }
             return Rotation2d.fromRotations(positionCode.getValueAsDouble());
-        } else 
+        } else
             return new Rotation2d();
     }
-
 
     public CANcoder get() {
         return _encoder;

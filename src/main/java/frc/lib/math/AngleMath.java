@@ -66,8 +66,10 @@ public class AngleMath extends SubsystemBase {
         for (SwerveModule module : Swerve.getInstance()._modules) {
             origIValue = module.constants.SteerMotorGains.kI;
             origDValue = module.constants.SteerMotorGains.kI;
-            module._angleMotor._motor.getConfigurator().apply(module.constants.SteerMotorGains.withKI(module.constants.SteerMotorGains.kI + 0.003));
-            module._angleMotor._motor.getConfigurator().apply(module.constants.SteerMotorGains.withKD(module.constants.SteerMotorGains.kD + 0.003));
+            // module._angleMotor._motor.getConfigurator().apply(module.constants.SteerMotorGains.withKI(module.constants.SteerMotorGains.kI
+            // + 0.003));
+            // module._angleMotor._motor.getConfigurator().apply(module.constants.SteerMotorGains.withKD(module.constants.SteerMotorGains.kD
+            // + 0.003));
             module.constants.SteerMotorGains.kI = origIValue + 0.003;
             module.constants.SteerMotorGains.kD = origDValue + 0.003;
         }
@@ -157,7 +159,7 @@ public class AngleMath extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(isInitialized){
+        if (isInitialized) {
             initializeAngleCalculator();
         }
     }

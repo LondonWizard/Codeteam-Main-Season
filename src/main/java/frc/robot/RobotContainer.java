@@ -1,7 +1,12 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Volts;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,13 +16,18 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.OscarLib.lib.Swerve.LocalADStarAK;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -44,7 +54,6 @@ public class RobotContainer {
     private final JoystickButton serialize = new JoystickButton(driver, PS4Controller.Button.kOptions.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL1.value);
 
-
     /* Subsystems */
     private final Swerve s_Swerve = Swerve.getInstance();
 
@@ -62,12 +71,19 @@ public class RobotContainer {
                         () -> robotCentric.getAsBoolean()));
         AutoBuilder.configure(s_Swerve::getPose,
                 s_Swerve::resetPose,
-                s_Swerve::getRobotRelativeSpeeds,
-                (speeds, feedforwards) -> s_Swerve.Drive(speeds), new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                Constants.AutoConstants.translationConstants, // Translation PID constants
-                Constants.AutoConstants.rotationConstants), Constants.AutoConstants.config, RobotContainer::getIsRed,
+                s_Swerve::getChassisSpeeds,
+                (speeds, feedforwards) -> s_Swerve.runVelocity(speeds), new PPHolonomicDriveController( // PPHolonomicController
+                        // is the built in
+                        // path following
+                        // controller for
+                        // holonomic drive
+                        // trains
+                        Constants.AutoConstants.translationConstants, // Translation PID constants
+                        Constants.AutoConstants.rotationConstants),
+                Constants.AutoConstants.config, RobotContainer::getIsRed,
                 s_Swerve);
         autoChooser = AutoBuilder.buildAutoChooser("New Auto");
+        Pathfinding.setPathfinder(new LocalADStarAK());
 
         // Configure the button bindings
         configureButtonBindings();
@@ -109,5 +125,22 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
         return autoChooser.getSelected();
+    }
+
+    public Command getSysIDCommand() {
+        var sysIdRoutine = new SysIdRoutine(
+                new SysIdRoutine.Config(
+                        null, null, null, // Use default config
+                        (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+                new SysIdRoutine.Mechanism(
+                        (voltage) -> s_Swerve.runCharacterization(voltage.in(Volts)),
+                        null, // No log consumer, since data is recorded by AdvantageKit
+                        s_Swerve));
+        SequentialCommandGroup sysIdCommand = new SequentialCommandGroup();
+        sysIdCommand.addCommands(new Command[] { sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward),
+                sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse),
+                sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward),
+                sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse) });
+        return sysIdCommand;
     }
 }

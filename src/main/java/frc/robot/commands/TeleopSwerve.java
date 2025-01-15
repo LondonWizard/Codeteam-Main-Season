@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import frc.OscarLib.lib.Swerve.SwerveConstants;
 import frc.OscarLib.lib.Swerve.SwerveModule.SwerveControlMode;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
@@ -10,7 +11,11 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class TeleopSwerve extends Command {
@@ -48,10 +53,18 @@ public class TeleopSwerve extends Command {
 
         /* Drive */
         System.out.println("Trans: " + translationVal + " | Strafe: " + strafeVal + " | Rot: " + rotationVal);
-        s_Swerve.Drive(
-                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
-                rotationVal * Constants.Swerve.maxAngularVelocity,
-                !robotCentricSup.getAsBoolean(),
-                SwerveControlMode.VELOCITY);
+
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(translationVal * SwerveConstants.maxSpeed,
+                strafeVal * SwerveConstants.maxSpeed, rotationVal * SwerveConstants.maxAngularVelocity);
+
+        boolean isFlipped = DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red;
+
+        s_Swerve.runVelocity(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        chassisSpeeds,
+                        isFlipped
+                                ? s_Swerve.getRotation().plus(new Rotation2d(Math.PI))
+                                : s_Swerve.getRotation()));
     }
 }
